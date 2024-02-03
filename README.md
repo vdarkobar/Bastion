@@ -5,7 +5,7 @@
 > *Do not set root password during installation, this way created user will gain sudo privileges.*   
 > Add SSH Server during installation.*  
   
-### *Run this command*:
+### *Run this commandand follow the instructions*:
 ```
 sudo apt -y install git
 RED='\033[0;31m'; echo -ne "${RED}Enter directory name: "; read NAME; mkdir -p "$NAME"; \
