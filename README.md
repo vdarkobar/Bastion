@@ -7,7 +7,9 @@
   
 ### *Run this command and follow the instructions*:
 ```
-sudo apt -y install git
+clear
+rm README.md && \
+sudo apt -y install git && \
 RED='\033[0;31m'; echo -ne "${RED}Enter directory name: "; read NAME; mkdir -p "$NAME"; \
 cd "$NAME" && git clone https://github.com/vdarkobar/Bastion.git . && \
 chmod +x create.sh && \
