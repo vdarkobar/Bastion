@@ -24,7 +24,7 @@ rm README.md && \
 ./create.sh
 ```
 
-<br><br>
+
 <br><br>
 *(steps used to configure <a href="https://github.com/vdarkobar/Home-Cloud/blob/main/shared/Bastion.md#bastion">Bastion Server</a>.)*
 
