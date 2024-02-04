@@ -23,3 +23,6 @@ chmod +x create.sh && \
 rm README.md && \
 ./create.sh
 ```
+  <br><br>
+- Configure <a href="https://github.com/vdarkobar/Home-Cloud/blob/main/shared/Bastion.md#bastion">Bastion Server</a> manualy.
+  <br><br>
