@@ -1,5 +1,5 @@
 <p align="left">
-  <a href="https://github.com/vdarkobar/Home-Cloud#self-hosted-cloud">Home</a>
+  <a href="https://github.com/vdarkobar/Home-Cloud/blob/main/README.md#bastion--jump-server">Home</a>
 </p>  
   
 # Bastion
