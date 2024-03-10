@@ -558,34 +558,42 @@ sleep 1.5 # delay for 1.5 seconds
   ip_address=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2}' | cut -d/ -f1)
   # command that shows only first identified ip v4 address
   #ip_address=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2}' | cut -d/ -f1 | head -n 1)
+  # capturing the contents of the public key
+  PUB_KEY=$(cat ~/.ssh/id_ed25519.pub)
+  echo
   echo -e "${GREEN}Everything is set. Your new Bastion Host | Jump Server is ready! ${NC}"
-
-  sleep 1.5 # delay for 1.5 seconds
-
   echo
-  echo -e "${GREEN}Please DO NOT forget to remember the SSH port number ${NC}"
   echo
-  echo -e "${GREEN}You can always use Proxmox VM Console to find the SSH port number in '/etc/ssh/sshd_config' file ${NC}"
+  echo -ne "${GREEN} SSH Public key. Copy to Template Cloud-Init drive.${NC}"
   echo
-
-  echo -e "${GREEN}SSH port is ##  ${RED}$current_ssh_port ${NC} ${GREEN}## ${NC}"          #default port number (22) can be omitted
-
+  echo " $PUB_KEY"
   echo
-  echo -e "${GREEN}SSH to this Server using the command: ${NC}"
+  sleep 0.5 # delay for 0.5 seconds
+  echo	
   echo
-  echo -e "${RED}ssh $username@$ip_address -p $current_ssh_port ${NC}"
+  echo -e "${GREEN} Please DO NOT forget to remember the SSH port number ${NC}"
   echo
-  echo -e "${GREEN}To jump to a remote host (from your local machine) use the command: ${NC}"
-  echo
-  echo -e "${RED}ssh -J $username@$ip_address:$current_ssh_port username@remote_host ${NC}"
+  echo -e "${GREEN} You can always use Proxmox VM Console to find the SSH port number in '/etc/ssh/sshd_config' file ${NC}"
   echo
 
-  sleep 1.5 # delay for 1.5 seconds
+  echo -e "${GREEN} SSH port is ##  ${RED}$current_ssh_port ${NC} ${GREEN}## ${NC}"          #default port number (22) can be omitted
+
+  echo
+  echo -e "${GREEN} SSH to this Server using the command: ${NC}"
+  echo
+  echo -e "${RED} ssh $username@$ip_address -p $current_ssh_port ${NC}"
+  echo
+  echo -e "${GREEN} To jump to a remote host (from your local machine) use the command: ${NC}"
+  echo
+  echo -e "${RED} ssh -J $username@$ip_address:$current_ssh_port username@remote_host ${NC}"
+  echo
+
+  sleep 0.5 # delay for 0.5 seconds
 
 #####################################
 # Prompt user for action at the end #
 #####################################
-echo -e "${GREEN}Take appropriate action to finish the script: ${NC}"
+echo -e "${GREEN} Take appropriate action to finish the script: ${NC}"
 
 echo ""
 
@@ -703,7 +711,7 @@ revert_changes() {
 #################################################
 
 while true; do
-  echo -e "${GREEN}Reboot the machine now (recommended), revert changes or exit the script? (reboot/revert/exit): ${NC}"
+  echo -e "${GREEN}Reboot the machine now (recommended), revert changes or exit the script?${NC} (reboot/revert/exit): "
   read action
 
   case $action in
@@ -724,7 +732,7 @@ while true; do
       break
       ;;
     *)
-      echo -e "${YELLOW}Invalid input. Please enter 'reboot', 'exit', or 'revert'.${NC}"
+      echo -e "${YELLOW}Invalid input. Please enter:${NC} 'reboot', 'exit', or 'revert'."
       ;;
   esac
 done
