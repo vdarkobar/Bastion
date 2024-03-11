@@ -525,26 +525,6 @@ sleep 0.5 # delay for 0.5 seconds
 echo
 
 
-####################################################################################
-# Generating an Ed25519 SSH key with a key derivation function rounds value of 200 #
-####################################################################################
-
-echo -e "${GREEN} Generating an Ed25519 SSH key ${NC}"
-echo
-
-# Generate the SSH key and check if the operation is successful
-if ssh-keygen -t ed25519 -a 200 -N "" -f ~/.ssh/id_ed25519; then
-    echo
-    echo -e "${GREEN} Done.${NC}"
-else
-    echo -e "${RED} Failed to generate an Ed25519 SSH key. Exiting.${NC}"
-    exit 1
-fi
-
-sleep 0.5 # delay for 0.5 seconds
-echo
-
-
 ################
 # Restart sshd #
 ################
@@ -620,7 +600,6 @@ while true; do
 
       break
   elif [[ "$choice" =~ ^[nN][oO]$ ]]; then
-      echo
       echo -e "${GREEN} No changes were made to the SSH standard port. ${NC}"
       break
   else
@@ -767,11 +746,32 @@ if [[ "$change_confirm" =~ ^[yY][eE][sS]$ ]]; then
     done
 elif [[ "$change_confirm" =~ ^[nN][oO]$ ]]; then
     echo "Hostname change canceled."
+    echo
     # Continue with other parts of the script or handle the decision accordingly
 else
     echo -e "${RED} Invalid input. Please enter 'yes' or 'no'."
     # Optionally, prompt again or handle invalid input differently
 fi
+
+
+####################################################################################
+# Generating an Ed25519 SSH key with a key derivation function rounds value of 200 #
+####################################################################################
+
+echo -e "${GREEN} Generating an Ed25519 SSH key ${NC}"
+echo
+
+# Generate the SSH key and check if the operation is successful
+if ssh-keygen -t ed25519 -a 200 -N "" -f ~/.ssh/id_ed25519; then
+    echo
+    echo -e "${GREEN} Done.${NC}"
+else
+    echo -e "${RED} Failed to generate an Ed25519 SSH key. Exiting.${NC}"
+    exit 1
+fi
+
+sleep 0.5 # delay for 0.5 seconds
+echo
 
 
 ###################################################################
