@@ -10,7 +10,7 @@
 </p>
 
 > *Create Debian server VM/CT: (2CPU/2GBRAM/16GBHDD).  
-> *Do not set root password during installation, this way created user will gain sudo privileges.*   
+> *Do not set root password during installation (VM), this way created user will gain sudo privileges.*   
 > *Add SSH Server during installation.*  
   
 ### *Run this command and follow the instructions*:
