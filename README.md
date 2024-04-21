@@ -9,7 +9,7 @@
   <img src="https://github.com/vdarkobar/Home-Cloud/blob/main/shared/bastion.webp">
 </p>
 
-> *Create <a href="https://www.debian.org/">Debian server</a> VM: (2CPU/2GBRAM/16GBHDD).  
+> *Create Debian server VM/CT: (2CPU/2GBRAM/16GBHDD).  
 > *Do not set root password during installation, this way created user will gain sudo privileges.*   
 > *Add SSH Server during installation.*  
   
