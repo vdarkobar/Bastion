@@ -28,7 +28,7 @@ echo
 echo -e "${GREEN} REMEMBER: ${NC}"
 echo
 sleep 0.5 # delay for 0.5 seconds
-echo -e "${GREEN} - You should be on a clean Debian Server/Server VM install before running this script ${NC}"
+echo -e "${GREEN} - You should be on a clean Debian Server VM/CT install before running this script ${NC}"
 echo
 echo -e "${GREEN} - You should be logged in as a non root user ${NC}"
 echo
@@ -664,96 +664,6 @@ echo
 sleep 0.5 # delay for 0.5 seconds
 
 
-#####################################
-# Setting up bash and tmux dotfiles #
-#####################################
-
-echo -e "${GREEN} Setting up bash and tmux dotfiles...${NC}"
-echo
-sleep 1 # delay for 1 second
-
-# Define user home directory explicitly to avoid any ambiguity and potential permission issues
-USER_HOME=$(eval echo ~$USER)
-
-# Clone the dotfiles repository
-if ! git clone https://github.com/vdarkobar/dotfiles.git "$USER_HOME/dotfiles"; then
-    echo -e "${RED} Failed to clone dotfiles repository. Exiting.${NC}"
-    exit 1
-fi
-
-# Change directory to the cloned repository
-cd "$USER_HOME/dotfiles" || { echo -e "${RED}Failed to navigate to dotfiles directory. Exiting.${NC}"; exit 1; }
-
-# Make installation and uninstallation scripts executable
-if ! chmod +x install.sh uninstall.sh; then
-    echo -e "${RED} Failed to make scripts executable. Exiting.${NC}"
-    exit 1
-fi
-
-# Execute the install script
-if ! ./install.sh; then
-    echo -e "${RED} Failed to execute the install script. Exiting.${NC}"
-    exit 1
-fi
-
-# Change back to the user home directory
-cd "$USER_HOME" || { echo -e "${RED} Failed to return to home directory. Exiting.${NC}"; exit 1; }
-
-sleep 0.5 # delay for 0.5 second
-
-
-###################
-# Change hostname #
-###################
-
-# Get the current hostname
-current_hostname=$(hostname)
-
-echo
-echo -e "${GREEN} Current hostname:${NC} $current_hostname"
-echo
-
-# Ask user if they want to change the hostname
-echo -e "${GREEN} Do you want to change the hostname?${NC} (yes/no): "
-echo
-read change_confirm
-echo
-
-if [[ "$change_confirm" =~ ^[yY][eE][sS]$ ]]; then
-    # Prompt for the new hostname
-    while true; do
-        echo -n -e "${GREEN} Enter the new hostname: ${NC}"
-        read new_hostname
-        echo
-
-        # Check if the input is empty
-        if [[ -z "$new_hostname" ]]; then
-            echo -e "${GREEN} Hostname cannot be empty. Please enter a valid hostname.${NC}"
-        else
-            # Attempt to change the hostname in /etc/hosts
-            if ! sudo sed -i "s/$current_hostname/$new_hostname/g" /etc/hosts; then
-                echo -e "${RED} Failed to update hostname in /etc/hosts."
-                # Handle failure or exit if needed
-            fi
-
-            # Attempt to set the new system hostname
-            if ! sudo hostnamectl set-hostname "$new_hostname"; then
-                echo -e "${RED} Failed to update system hostname."
-                # Handle failure or exit if needed
-            fi
-            break
-        fi
-    done
-elif [[ "$change_confirm" =~ ^[nN][oO]$ ]]; then
-    echo "Hostname change canceled."
-    echo
-    # Continue with other parts of the script or handle the decision accordingly
-else
-    echo -e "${RED} Invalid input. Please enter 'yes' or 'no'."
-    # Optionally, prompt again or handle invalid input differently
-fi
-
-
 ####################################################################################
 # Generating an Ed25519 SSH key with a key derivation function rounds value of 200 #
 ####################################################################################
@@ -806,9 +716,9 @@ echo
 #    -W: display "warm-up" codes when first setting up Google Authenticator
 
 
-############
-# Reminder #
-############
+######################
+# Info before reboot #
+######################
 
 username=$(whoami)
 ip_address=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2}' | cut -d/ -f1)
@@ -872,16 +782,7 @@ while true; do
     *)
       echo
       echo -e "${YELLOW} Invalid input. Please enter:${NC} 'restart' or 'exit'"
+      echo
       ;;
   esac
 done
-
-
-#####################################
-# Remove the Script from the system #
-#####################################
-
-echo -e "${RED} This Script Will Self Destruct!${NC}"
-echo
-# VERY LAST LINE OF THE SCRIPT:
-rm -- "$0"
