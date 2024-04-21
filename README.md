@@ -14,14 +14,9 @@
 > *Add SSH Server during installation.*  
   
 ### *Run this command and follow the instructions*:
+*VM/CT*:
 ```
-clear
-sudo apt -y install git && \
-RED='\033[0;31m'; NC='\033[0m'; echo -ne "${RED}Enter directory name: ${NC}"; read NAME; mkdir -p "$NAME"; \
-cd "$NAME" && git clone https://github.com/vdarkobar/Bastion.git . && \
-chmod +x create.sh && \
-rm README.md && \
-./create.sh
+bash -c "$(wget -qLO - https://raw.githubusercontent.com/vdarkobar/Bastion/main/setup.sh)"
 ```
 
 
