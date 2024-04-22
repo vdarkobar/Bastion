@@ -21,16 +21,29 @@ NC='\033[0m'
 # Intro message #
 #################
 
+# Get the primary local IP address of the machine more reliably
+LOCAL_IP=$(ip route get 1.1.1.1 | awk '{print $7; exit}')
+# Get the short hostname directly
+HOSTNAME=$(hostname -s)
+# Use awk more efficiently to extract the domain name from /etc/resolv.conf
+DOMAIN_LOCAL=$(awk '/^search/ {print $2; exit}' /etc/resolv.conf)
+# Directly concatenate HOSTNAME and DOMAIN, leveraging shell parameter expansion for conciseness
+LOCAL_DOMAIN="${HOSTNAME}${DOMAIN_LOCAL:+.$DOMAIN_LOCAL}"
+
 echo
 echo -e "${GREEN} Securely access remote instances with a Bastion Host | Jump Server ${NC}"
 echo
 echo
+echo -e "${GREEN} Local IP Address      :${NC} $LOCAL_IP"
+echo -e "${GREEN} Machine hostname      :${NC} $HOSTNAME"
+echo -e "${GREEN} Local domain          :${NC} $DOMAIN_LOCAL"
+echo
+echo
 echo -e "${GREEN} REMEMBER: ${NC}"
 echo
-sleep 0.5 # delay for 0.5 seconds
 echo -e "${GREEN} - You should be on a clean Debian Server VM/CT install before running this script ${NC}"
-echo
 echo -e "${GREEN} - You should be logged in as a non root user ${NC}"
+echo -e "${GREEN} - Check local domain before changes are applied to hosts file${NC}"
 echo
 
 
@@ -53,9 +66,6 @@ while true; do
         sleep 0.5 # delay for 0.5 seconds
         if sudo apt update && sudo apt install -y \
             ufw \
-            git \
-            curl \
-            wget \
             gnupg2 \
             fail2ban \
             libpam-tmpdir \
@@ -122,6 +132,41 @@ if ! sudo cp /etc/sysctl.conf /etc/sysctl.bak; then
     echo -e "${RED} Error copying sysctl.conf for the second backup. Exiting.${NC}"
     exit 1
 fi
+
+
+######################
+# Prepare hosts file #
+######################
+
+echo
+echo -e "${GREEN} Setting up hosts file ${NC}"
+
+sleep 0.5 # delay for 0.5 seconds
+echo
+
+# Extract the domain name from /etc/resolv.conf
+domain_name=$(awk -F' ' '/^domain/ {print $2; exit}' /etc/resolv.conf)
+
+# Get the host's IP address and hostname
+host_ip=$(hostname -I | awk '{print $1}')
+host_name=$(hostname)
+
+# Construct the new line for /etc/hosts
+new_line="$host_ip $host_name $host_name.$domain_name"
+
+# Create a temporary file with the desired contents
+{
+    echo "$new_line"
+    echo "============================================"
+    # Replace the line containing the current hostname with the new line
+    awk -v hostname="$host_name" -v new_line="$new_line" '!($0 ~ hostname) || $0 == new_line' /etc/hosts
+} > /tmp/hosts.tmp
+
+# Move the temporary file to /etc/hosts
+sudo mv /tmp/hosts.tmp /etc/hosts
+
+echo -e "${GREEN} File${NC} /etc/hosts ${GREEN}has been updated ${NC}"
+echo
 
 
 ############################################
@@ -757,9 +802,9 @@ echo
 sleep 0.5 # delay for 0.5 seconds
 
 
-###################################################################
-# Ask user to power off for conversion to template or exit script #
-###################################################################
+############################################
+# Ask user to power restart or exit script #
+############################################
 
 while true; do
   echo -e "${GREEN} Restart the VM now${NC} (recommended) ${GREEN}or exit the script?${NC} (restart/exit):"
@@ -782,6 +827,7 @@ while true; do
     *)
       echo
       echo -e "${YELLOW} Invalid input. Please enter:${NC} 'restart' or 'exit'"
+      echo
       ;;
   esac
 done
