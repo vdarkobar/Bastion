@@ -3,7 +3,7 @@
 </p>  
   
 # Bastion
-## SSH connectivity to all of the VMs
+SSH connectivity to all of the VMs
 
 <p align="center">
   <img src="https://github.com/vdarkobar/Home-Cloud/blob/main/shared/bastion.webp">
